@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords"
+          content="admin, dashboard, bootstrap, template, flat, modern, theme, responsive, fluid, retina, backend, html5, css, css3">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <!--    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />-->
+<!--    <link rel="stylesheet" type="text/css" href="https://a.amap.com/jsapi_demos/static/demo-center/css/prety-json.css">-->
+
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode:'2f8af7c5b6908ba48f1e68c3fe9744ce',
+        }
+    </script>
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=9802c49d608a80962ed05ccdc9de7723&plugin=AMap.Driving"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <!--    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>-->
+
+    <link rel="shortcut icon" href="#" type="/image/png">
+
+    <title>Security Management</title>
+
+
+    <div th:include="common::commonheader"></div>
+
+</head>
+
+<body class="sticky-header" style="height: 100%;">
+
+<section>
+    <div th:replace="common :: leftmenu"></div>
+
+    <!-- main content start-->
+    <div class="main-content" style="min-height: 100%;">
+
+        <div th:replace="common :: headermenu"></div>
+
+
+        <!-- page heading start-->
+        <div class="page-heading">
+            <h3>
+                Security Management
+            </h3>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="#">Home</a>
+                </li>
+                <li class="active">Security Management</li>
+            </ul>
+        </div>
+
+        <!--body wrapper start-->
+        <div class="wrapper">
+            <div class="col-md-4">
+
+                <div class="row" style="padding-bottom: 10px;margin-right: 14px;background-color: white;margin-bottom: 10px;border-radius: 10px;">
+                        <div class="row center-block" style="margin-bottom: 15px;padding-left: 20px;">
+                        <h3>Number of Orders：[[${allOrders.size()}]]</h3>
+                        </div>
+                        <form role="form" class="form-inline" style="background-color: white">
+                            <div class="form-group col-md-6">
+                                <input type="text" style="width: 100%" placeholder="Input" class="form-control input-lg">
+                            </div>
+                            <button class="btn btn-primary col-md-2 input-lg" type="submit">Search</button>
+                            <div class="dropdown col-md-offset-1 col-md-2">
+                                <button type="button" class="input-lg btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    Filters<span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Under Protection</a></li>
+                                    <li><a href="#">Unprotected</a></li>
+                                </ul>
+                            </div>
+                        </form>
+                </div>
+
+                <div class="row" style="height:600px;overflow:auto; position: relative;margin-right: 1px;">
+                    <div class="row col-md-12" style="margin-top: 20px;padding-right: 0px;">
+                        <div class="col-md-12" style="padding: 0px;">
+                            <div class="panel newPanel" th:each="order:${allOrders}">
+                                <div class="panel-body" style="padding-left: 0">
+                                    <div class="row" style="margin-left: 0">
+                                        <div class="col-md-10" style="height: 70px;padding: 0;">
+                                            <h4 class="col-md-6 text-center" style="line-height: 70px;margin:0;padding: 0"><strong >Order ID: [[${order.orderId}]]</strong></h4>
+                                            <h4 class="col-md-6" style="line-height: 70px;padding: 0;margin:0;color: #1CAF9A" th:if="${order.privacyStatus} == true"><strong>Under Protection</strong></h4>
+                                            <h4 class="col-md-6" style="line-height: 70px;padding: 0;margin: 0;color: #c9302c" th:if="${order.privacyStatus} == false"><strong>Unprotected</strong></h4>
+                                        </div>
+
+                                        <h4 class="col-md-2" style="padding-left: 0px;height: 70px;margin-top: 0;">
+                                            <div class="row" style="margin-bottom: 5px;">
+                                                <div class="dropdown">
+                                                    <button style="font-size: 15px;" type="button" class="col-md-10 btn btn-primary dropdown-toggle" id="dropdownMenu1"
+                                                            data-toggle="dropdown">
+                                                        Enable
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" style="position: absolute;z-index: 10000;top: 35px;" role="menu" aria-labelledby="dropdownMenu1">
+                                                        <li role="presentation">
+                                                            <a th:href="@{'/safe/' + ${order.id} + '?type=1'}" role="menuitem" tabindex="-1" href="#">GeoDp</a>
+                                                        </li>
+                                                        <li role="presentation">
+                                                            <a th:href="@{'/safe/' + ${order.id} + '?type=2'}" role="menuitem" tabindex="-1" href="#">GeoDpEnhance</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+<!--                                                <a class="btn btn-primary col-md-10" style="border-radius: 5px;font-size: 16px;padding: 2px;" th:href="@{'/main/'+${order.id}}">-->
+<!--                                                    Enable Privacy-->
+<!--                                                </a>-->
+                                            </div>
+                                            <div class="row">
+                                                <a th:href="@{'/safe/' + ${order.id} + '?type=0'}" class="btn btn-danger col-md-10" style="border-radius: 5px;font-size: 15px;">
+                                                    Disable
+                                                </a>
+                                            </div>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8" style="background-color: white;height: 700px;padding: 10px;border-radius: 10px;">
+                <div id="container" style="position: relative;width: 100%;height: 100%;border-radius: 10px;">
+<!--                    <button onclick="reload()" class="btn btn-lg" style="z-index: 100;position: relative">dddd</button>-->
+                </div>
+                <!--                <div id="panel"></div>-->
+                <!--                <img src="images/hefeimap.png" class="img-responsive" alt="goolemap"-->
+                <!--                     style="position: relative;width: 100%;height: 100%;">-->
+
+            </div>
+        </div>
+        <!--body wrapper end-->
+
+        <!--footer section start-->
+        <footer style="text-align: center;margin-top: 10px;">
+            2022 &copy; By AHU ISEC
+        </footer>
+        <!--footer section end-->
+
+
+        <input id="pathLists" hidden="hidden" th:value="${pathLists}"/>
+        <input id="desLocation" hidden="hidden" th:value="${desLocation}"/>
+
+
+    </div>
+    <!-- main content end-->
+</section>
+
+<div th:replace="common :: commonscript"></div>
+
+<!--easy pie chart-->
+<script src="/js/easypiechart/jquery.easypiechart.js"></script>
+<script src="/js/easypiechart/easypiechart-init.js"></script>
+
+<!--Sparkline Chart-->
+<script src="/js/sparkline/jquery.sparkline.js"></script>
+<script src="/js/sparkline/sparkline-init.js"></script>
+
+<!--icheck -->
+<script src="/js/iCheck/jquery.icheck.js"></script>
+<script src="/js/icheck-init.js"></script>
+
+<!-- jQuery Flot Chart-->
+<script src="/js/flot-chart/jquery.flot.js"></script>
+<script src="/js/flot-chart/jquery.flot.tooltip.js"></script>
+<script src="/js/flot-chart/jquery.flot.resize.js"></script>
+
+
+<!--Morris Chart-->
+<script src="/js/morris-chart/morris.js"></script>
+<script src="/js/morris-chart/raphael-min.js"></script>
+
+<!--Calendar-->
+<script src="/js/calendar/clndr.js"></script>
+<script src="/js/calendar/evnt.calendar.init.js"></script>
+<script src="/js/calendar/moment-2.2.1.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+
+
+<!--Dashboard Charts-->
+<!--<script src="/js/dashboard-chart-init.js"></script>-->
+
+<!--<script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=9802c49d608a80962ed05ccdc9de7723"></script>-->
+<!--<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/jquery-1.11.1.min.js" ></script>-->
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/underscore-min.js" ></script>
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/backbone-min.js" ></script>
+<script type="text/javascript" src='https://a.amap.com/jsapi_demos/static/demo-center/js/prety-json.js'></script>
+<script>
+
+    // function reload() {
+    //     $("#container").load(location.href + " #container>*", "");
+    // }
+
+
+    $('#security').addClass("active").siblings().removeClass("active");
+
+
+
+    var path = JSON.parse($('#pathLists').val());
+    var desLocation = JSON.parse($('#desLocation').val());
+
+
+    var start_lo = path[path.length-1][0];
+    var end_la = path[path.length-1][1];
+
+    // alert(path.length);
+    var map = new AMap.Map("container", {
+        // center: [112.187017,31.763388],
+        resizeEnable: true,
+        lang: "en"
+        // zoom: 16
+    });
+
+    var drivingOption = {
+        policy: AMap.DrivingPolicy.LEAST_TIME, // https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingPolicy
+        ferry: 1,
+        map: map,
+        autoFitView: false,
+        // panel: 'panel'
+    }
+
+    var driving = new AMap.Driving(drivingOption)
+
+    driving.search(new AMap.LngLat(start_lo,end_la), new AMap.LngLat(desLocation[0],desLocation[1]), function(status, result) {
+        // https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
+        if (status === 'complete') {
+        } else {
+            log.error('fail' + result)
+        }
+    });
+
+
+    var startIcon = new AMap.Icon({
+        size: new AMap.Size(25, 34),
+        image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+        imageSize: new AMap.Size(135, 40),
+        imageOffset: new AMap.Pixel(-9, -3)
+    });
+
+    // var content1 = '<div class="marker-route marker-marker-bus-from"></div>';
+    var marker1 = new AMap.Marker({
+        // content: markerContent,
+        icon: startIcon,
+        // icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png",
+        position: path[0],
+        offset: new AMap.Pixel(-17, -25),
+    });
+
+    var endIcon = new AMap.Icon({
+        size: new AMap.Size(25, 34),
+        image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+        imageSize: new AMap.Size(135, 40),
+        imageOffset: new AMap.Pixel(-50, -3)
+    });
+    var marker2 = new AMap.Marker({
+        icon: endIcon,
+        // icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
+        position: path[path.length-1],
+        offset: new AMap.Pixel(-14, -29),
+    });
+
+    map.add([marker1,marker2])
+
+
+
+
+
+    var polyline2 = new AMap.Polyline({
+        path: path,
+        isOutline: true,
+        outlineColor: '#ffeeff',
+        borderWeight: 3,
+        strokeColor: "#f0f",
+        strokeOpacity: 1,
+        strokeWeight: 6,
+        strokeStyle: "dashed",
+        strokeDasharray: [15, 5],
+        lineJoin: 'round',
+        lineCap: 'round',
+        zIndex: 50,
+    })
+    map.add(polyline2);
+
+    var text1 = new AMap.Text({
+        text:'end',
+        anchor:'top-left',
+        draggable:true,
+        cursor:'pointer',
+        style:{
+            'padding': '.75rem 1.25rem',
+            'margin-bottom': '1rem',
+            'border-radius': '.40rem',
+            'background-color': 'white',
+            'width': '8rem',
+            'border-width': 0,
+            'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+            'text-align': 'center',
+            'font-size': '20px',
+            'color': 'red',
+            'x-index':'10000'
+        },
+        position: desLocation
+    });
+
+
+
+    var text2 = new AMap.Text({
+        text:'start',
+        anchor:'top-left',
+        draggable:true,
+        cursor:'pointer',
+        style:{
+            'padding': '.75rem 1.25rem',
+            'margin-bottom': '1rem',
+            'border-radius': '.40rem',
+            'background-color': 'white',
+            'width': '8rem',
+            'border-width': 0,
+            'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+            'text-align': 'center',
+            'font-size': '20px',
+            'color': 'green',
+            'x-index':'10000'
+        },
+        // position: [location1[0],location1[1]]
+        position: path[0]
+    });
+
+    text1.setMap(map);
+    text2.setMap(map);
+
+
+
+    map.setFitView(null, true, [20, 20, 20, 20]);
+
+</script>
+
+
+</body>
+</html>

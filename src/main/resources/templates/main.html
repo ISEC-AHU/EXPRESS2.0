@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords"
+          content="admin, dashboard, bootstrap, template, flat, modern, theme, responsive, fluid, retina, backend, html5, css, css3">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+<!--    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />-->
+    <link rel="stylesheet" type="text/css" href="https://a.amap.com/jsapi_demos/static/demo-center/css/prety-json.css">
+
+
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode:'2f8af7c5b6908ba48f1e68c3fe9744ce',
+        }
+    </script>
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=9802c49d608a80962ed05ccdc9de7723&plugin=AMap.Driving"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+<!--    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>-->
+
+    <link rel="shortcut icon" href="#" type="image/png">
+
+    <title>EXPRESS 2.0</title>
+
+
+    <div th:include="common::commonheader"></div>
+
+    <style type="text/css">
+        .amap-icon img,
+        .amap-marker-content img{
+            width: 25px;
+            height: 34px;
+        }
+    </style>
+
+</head>
+
+<body class="sticky-header" style="height: 100%;">
+
+<section>
+    <div th:replace="common :: leftmenu"></div>
+
+    <!-- main content start-->
+    <div class="main-content" style="min-height: 100%;">
+
+        <div th:replace="common :: headermenu"></div>
+
+
+        <!--body wrapper start-->
+        <div class="wrapper">
+            <div class="col-md-4">
+
+                <div class="row" style="padding-bottom: 10px;">
+                    <div class="row center-block" style="margin-bottom: 15px;padding-left: 20px;">
+                        <h4 class="col-md-6">Number of Orders：[[${allOrders.size()}]]</h4>
+                        <h4 class="col-md-6">Unfinished Orders：[[${activeOrdersNum}]]</h4>
+                    </div>
+                    <form role="form" class="form-inline">
+                        <div class="form-group col-md-6">
+                            <input type="text" style="width: 100%" placeholder="Input" class="form-control input-lg">
+                        </div>
+                        <button class="btn btn-primary col-md-2 input-lg" type="submit">Search</button>
+                        <div class="dropdown col-md-offset-1 col-md-2">
+                            <button type="button" class="input-lg btn btn-default dropdown-toggle"
+                                    data-toggle="dropdown">
+                                Filters<span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Ready</a></li>
+                                <li><a href="#">Delivery in Process</a></li>
+                                <li><a href="#">Timeout</a></li>
+                                <li><a href="#">Finished</a></li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="row" style="height:690px;overflow:auto; position: relative;margin-right: 1px;">
+                    <div class="row col-md-12" style="margin-top: 20px;padding-right: 0px;">
+                        <div class="col-md-12" style="padding: 0px;">
+                            <div class="panel newPanel" th:onclick="getLocaltion([[${order.id}]]);" th:each="order:${allOrders}">
+                                <div class="panel-body" style="margin-left: 10px;padding-right: 0">
+                                        <div class="row">
+                                            <h4 class="col-md-5"><strong>Order ID: [[${order.orderId}]]</strong></h4>
+                                            <h4 class="col-md-offset-7" style="padding: 0px;">
+                                            <a class="btn btn-primary" id="order[[{order.id}}]]" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                                  th:if="${order.status} == 0" th:href="@{'/main/'+${order.id}}">
+                                                Ready
+                                            </a>
+                                            <a class="btn btn-info" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                                      th:if="${order.status} == 1" th:href="@{'/main/'+${order.id}}">
+                                                Delivery in Process
+                                            </a>
+                                            <a class="btn btn-danger" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                                      th:if="${order.status} == 2" th:href="@{'/main/'+${order.id}}">
+                                                Timeout
+                                            </a>
+                                            <a class="btn btn-success" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                                   th:if="${order.status} == 3" th:href="@{'/main/'+${order.id}}">
+                                                Finished
+                                            </a>
+                                            </h4>
+                                        </div>
+                                        <div class="row">
+                                            <p class="col-md-4"><strong>Items: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span style="color: #2F6F9F">[[${order.goods}]]</span></strong></p>
+                                            <p class="col-md-4 col-md-offset-1"><strong>Last Station:</strong></p>
+                                            <p class="col-md-1"><strong><span style="color: #2F6F9F">[[${order.lastStation}]]</span></strong></p>
+                                        </div>
+                                        <div class="row">
+                                            <p class="col-md-4"><strong>Deadline: <span style="color: #2F6F9F">[[${order.deadline}]] min</span></strong></p>
+                                            <p class="col-md-4 col-md-offset-1"><strong>Next Station:</strong></p>
+                                            <p class="col-md-1"><strong><span style="color: #2F6F9F">[[${order.nextStation}]]</span></strong></p>
+                                        </div>
+                                    </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8" style="background-color: white;height: 820px;padding: 10px;border-radius: 10px;">
+                <div id="container" style="position: relative;width: 100%;height: 100%;border-radius: 10px;"></div>
+                <div id="panel"></div>
+                <div class="row col-md-3 panel newPanel" style="position: absolute;top: 40px;padding: 0;left: 40px;">
+                    <div class="panel-body" style="padding: 0;">
+                        <div class="col-md-6" style="padding: 5px 10px 5px 10px">
+                            <a class="btn btn-primary btn-block"><strong>Add station</strong></a>
+                        </div>
+                        <div class="col-md-6" style="padding: 5px 10px 5px 10px">
+                            <a class="btn btn-primary btn-block"><strong>Add path</strong></a>
+                        </div>
+                    </div>
+                </div>
+<!--                <img src="images/hefeimap.png" class="img-responsive" alt="goolemap"-->
+<!--                     style="position: relative;width: 100%;height: 100%;">-->
+
+            </div>
+        </div>
+        <!--body wrapper end-->
+
+        <!--footer section start-->
+        <footer style="text-align: center;margin-top: 10px;">
+            2022 &copy; By AHU ISEC
+        </footer>
+        <!--footer section end-->
+
+
+        <input id="stationNames" hidden="hidden" th:value="${stationNames}"/>
+        <input id="stationLongitudesAndLatitudes" hidden="hidden" th:value="${stationLongitudesAndLatitudes}"/>
+        <input id="pathLists" hidden="hidden" th:value="${pathLists}"/>
+        <input id="customerNames" hidden="hidden" th:value="${customerNames}"/>
+        <input id="customerLongitudesAndLatitudes" hidden="hidden" th:value="${customerLongitudesAndLatitudes}"/>
+        <input id="allCarToCustomerPath" hidden="hidden" th:value="${allCarToCustomerPath}"/>
+
+
+    </div>
+    <!-- main content end-->
+</section>
+<!--<script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=9802c49d608a80962ed05ccdc9de7723"></script>-->
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/jquery-1.11.1.min.js" ></script>
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/underscore-min.js" ></script>
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/backbone-min.js" ></script>
+<script type="text/javascript" src='https://a.amap.com/jsapi_demos/static/demo-center/js/prety-json.js'></script>
+<script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
+
+<script>
+
+    $('#main').addClass("active").siblings().removeClass("active");
+        // let index = $(this).index();
+        // $(".Content>div").eq(index).show().siblings().hide();
+
+    function getLocaltion(el) {
+        window.location.href = `main/` + el;
+    }
+</script>
+<script>
+
+    getFileStatus();
+    function getFileStatus() {
+        $.ajax({
+            url: "/ajax/getFileStatus",
+            type: 'get',
+            success: function (data) {
+                if (data == "0") {
+                    var t = document.getElementById('form');
+                    t.style.display = 'block';
+                }
+            },
+        });
+    }
+
+    var stationName = JSON.parse($('#stationNames').val());
+    var stationLongitudesAndLatitudes = JSON.parse($('#stationLongitudesAndLatitudes').val());
+    var path = JSON.parse($('#pathLists').val());
+    var customerNames = JSON.parse($('#customerNames').val());
+    var customerLoAndLa = JSON.parse($('#customerLongitudesAndLatitudes').val());
+    var allCarToCustomerPath = JSON.parse($('#allCarToCustomerPath').val());
+    // alert(path.length);
+
+
+    var map = new AMap.Map("container", {
+        // center: [112.187017,31.763388],
+        resizeEnable: true,
+        zoom: 16,
+        lang: "en"
+    });
+
+
+    for (var i = 0; i < path.length; i++) {
+        var polyline = new AMap.Polyline({
+            path: path[i],
+            isOutline: true,
+            outlineColor: '#ffeeff',
+            borderWeight: 3,
+            strokeColor: "#f0f",
+            strokeOpacity: 1,
+            strokeWeight: 6,
+            strokeStyle: "dashed",
+            strokeDasharray: [15, 5],
+            lineJoin: 'round',
+            lineCap: 'round',
+            zIndex: 50,
+        })
+        map.add(polyline);
+    }
+
+    for (var i = 0; i < allCarToCustomerPath.length; i++) {
+        var polyline = new AMap.Polyline({
+            path: allCarToCustomerPath[i],
+            isOutline: true,
+            outlineColor: '#ffeeff',
+            borderWeight: 3,
+            strokeColor: "#000",
+            strokeOpacity: 1,
+            strokeWeight: 6,
+            strokeStyle: "dashed",
+            strokeDasharray: [15, 5],
+            lineJoin: 'round',
+            lineCap: 'round',
+            zIndex: 50,
+        })
+        map.add(polyline);
+    }
+
+
+    for (var i = 0; i < stationName.length; i++) {
+        var color;
+        if (stationName[i][0] == 'W') {
+            color = 'green';
+        } else if (stationName[i][0] == 'D') {
+            color = 'red';
+        } else {
+            color = 'black';
+        }
+        var text1 = new AMap.Text({
+            text:stationName[i],
+            anchor:'top-left',
+            draggable:true,
+            cursor:'pointer',
+            style:{
+                'padding': '.75rem 1.25rem',
+                'margin-bottom': '1rem',
+                'border-radius': '.40rem',
+                'background-color': 'white',
+                'width': '6rem',
+                'border-width': 0,
+                'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                'text-align': 'center',
+                'font-size': '15px',
+                'font-weight': 'bolder',
+                'color': color,
+                'x-index':'10000'
+            },
+            position: stationLongitudesAndLatitudes[i]
+        });
+        text1.setMap(map);
+
+        var marker = new AMap.Marker({
+            icon: '/icon/poi-marker-' + color + '.png',
+            position: stationLongitudesAndLatitudes[i],
+            offset: new AMap.Pixel(-13, -30)
+        });
+        marker.setMap(map);
+    }
+
+
+    for (var i = 0; i < customerNames.length; i++) {
+
+        var text1 = new AMap.Text({
+            text:customerNames[i],
+            anchor:'top-left',
+            draggable:true,
+            cursor:'pointer',
+            style:{
+                'padding': '.75rem 1.25rem',
+                'margin-bottom': '1rem',
+                'border-radius': '.40rem',
+                'background-color': 'white',
+                'width': '6rem',
+                'border-width': 0,
+                'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                'text-align': 'center',
+                'font-size': '15px',
+                'font-weight': 'bolder',
+                'color': 'blue',
+                'x-index':'10000'
+            },
+            position: customerLoAndLa[i]
+        });
+        text1.setMap(map);
+
+        var marker = new AMap.Marker({
+            icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+            position: customerLoAndLa[i],
+            offset: new AMap.Pixel(-13, -30)
+        });
+        marker.setMap(map);
+    }
+
+    map.setFitView(null, true, [20, 20, 20, 20]);
+
+</script>
+
+
+
+<div th:replace="common :: commonscript"></div>
+
+<!--easy pie chart-->
+<script src="/js/easypiechart/jquery.easypiechart.js"></script>
+<script src="/js/easypiechart/easypiechart-init.js"></script>
+
+<!--Sparkline Chart-->
+<script src="/js/sparkline/jquery.sparkline.js"></script>
+<script src="/js/sparkline/sparkline-init.js"></script>
+
+<!--icheck -->
+<script src="/js/iCheck/jquery.icheck.js"></script>
+<script src="/js/icheck-init.js"></script>
+
+<!-- jQuery Flot Chart-->
+<script src="/js/flot-chart/jquery.flot.js"></script>
+<script src="/js/flot-chart/jquery.flot.tooltip.js"></script>
+<script src="/js/flot-chart/jquery.flot.resize.js"></script>
+
+
+<!--&lt;!&ndash;Morris Chart&ndash;&gt;-->
+
+<!--<script src="/js/morris-chart/morris.js"></script>-->
+<!--<script src="/js/morris-chart/morris.init.js"></script>-->
+<!--<script src="/js/morris-chart/raphael-min.js"></script>-->
+
+<!--&lt;!&ndash;Dashboard Charts&ndash;&gt;-->
+<!--<script src="/js/dashboard-chart-init.js"></script>-->
+
+<!--Calendar-->
+<script src="/js/calendar/clndr.js"></script>
+<script src="/js/calendar/evnt.calendar.init.js"></script>
+<script src="/js/calendar/moment-2.2.1.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+    <link rel="shortcut icon" href="#" type="image/png">
+
+    <title>Order Management</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <link href="/css/jquery.stepy.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/style-responsive.css" rel="stylesheet">
+
+    <script src="https://unpkg.com/bpmn-js@0.27.0-1/dist/bpmn-viewer.development.js"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+
+    <div th:include="common::commonheader"></div>
+
+    <style>
+        tr th {
+            text-align: center;
+        }
+
+        .amap-icon img,
+         .amap-marker-content img{
+             width: 25px;
+             height: 34px;
+         }
+        .table tbody tr td{
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
+</head>
+
+<body class="sticky-header" style="height: 100%;">
+
+<section>
+    <div th:replace="common :: leftmenu"></div>
+
+    <!-- main content start-->
+    <div class="main-content" style="min-height: 100%;top: 50px;">
+        <!--        <div style="width:100%;height: 100%;background-color: #eff0f4">-->
+        <div th:replace="common :: headermenu"></div>
+
+        <!-- page heading start-->
+        <div class="page-heading">
+            <h3>
+                Order Management
+            </h3>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="main.html">Home</a>
+                </li>
+                <li class="active">Order Management</li>
+            </ul>
+        </div>
+        <!-- page heading end-->
+
+        <!--body wrapper start-->
+        <div class="wrapper" style="height: 771px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <section class="newPanel" style="background-color: white">
+
+                        <div class="panel-body">
+                            <div class="adv-table">
+                                <div class="col-md-6">
+                                    <button type="button" style="margin-bottom: 5px;" class="col-md-3 btn btn-info"
+                                            data-toggle="modal" data-target="#myModal2">Add Delivery Orders
+                                    </button>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <input class="form-control" type="text" placeholder="Input ID">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button class="btn btn-primary" type="submit">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button"
+                                                class="col-md-12 btn btn-default dropdown-toggle"
+                                                data-toggle="dropdown">
+                                            Filters<span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#">UAV/UGV Collaboration</a></li>
+                                            <li><a href="#">Only UAV</a></li>
+                                            <li><a href="#">Only UGV</a></li>
+                                        </ul>
+                                    </div>
+
+
+                                </div>
+                                <table class="table table-hover table-bordered">
+
+                                    <thead>
+                                    <tr>
+                                        <th style="vertical-align: middle;">Order ID</th>
+                                        <th style="vertical-align: middle;">Item</th>
+                                        <th style="vertical-align: middle;">Delivery Type</th>
+                                        <th style="vertical-align: middle;">Start Station</th>
+                                        <th style="vertical-align: middle;">End Station</th>
+                                        <th style="vertical-align: middle;width: 50px">Estimated Delivery Time/min</th>
+                                        <th style="vertical-align: middle;width: 50px">Estimated Delivery Energy Consumption/KJ</th>
+                                        <th style="vertical-align: middle;">Weight/kg</th>
+                                        <th style="vertical-align: middle;">Note</th>
+                                        <th style="vertical-align: middle;">Delivery Route</th>
+                                        <th style="vertical-align: middle;">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="order:${orders.getRecords()}">
+                                        <td th:text="${order.orderId}"></td>
+                                        <td th:text="${order.goods}"></td>
+                                        <td th:if="${order.model} == 1">UAV/UGV Collaboration</td>
+                                        <td th:if="${order.model} == 2">Only UAV</td>
+                                        <td th:if="${order.model} == 3">Only UGV</td>
+                                        <td th:text="${order.startStation}"></td>
+                                        <td th:text="${order.consignee}"></td>
+                                        <td th:text="${order.time}"></td>
+                                        <td th:text="${order.energy}"></td>
+                                        <td th:text="${order.weight}"></td>
+                                        <td th:text="${order.info}"></td>
+                                        <td th:text="${order.route}"></td>
+                                        <td><button th:value="${order.id}" class="fa fa-times btn-danger btn" onclick="deleteOrder(this.value)"> Delete</button></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <nav class="col-md-3 col-md-offset-9" aria-label="...">
+                                    <ul class="pagination">
+                                        <li><a th:href="@{/orders(pn=1)}">First</a></li>
+
+                                        <li th:class="${num == orders.current?'active':''}" th:each="num:${navNums}">
+                                            <a th:href="@{/orders(pn=${num})}">[[${num}]]</a></li>
+                                        <li><a th:href="@{/orders(pn=${orders.pages})}">Last</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+        <!--body wrapper end-->
+
+        <!--footer section start-->
+        <footer style="text-align: center;margin-top: 5px;margin-bottom: 0px;">
+            2022 &copy; By AHU ISEC
+        </footer>
+        <!--footer section end-->
+        <!--        </div>-->
+
+
+    </div>
+    <!-- main content end-->
+
+    <div class="modal fade form-horizontal" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 10px;font-size: 18px;font-weight: bolder">
+                <div class="modal-header" style="border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel2" style="font-weight: bolder">Creating a New Order</h4>
+                </div>
+                <div class="modal-body" style="padding-top: 5px;padding-bottom: 10px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="square-widget">
+                                <div class="widget-container">
+                                    <div id="workflow" style="display: none;height: 100px;overflow: hidden">
+                                        <div id="canvas" style="height: 400px;margin-left: -100px;margin-top: -50px;">
+                                            <div id="firstStep" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 270px;margin-top: 60px;opacity: 0.5"></div>
+                                            <div id="secondStep" style="display: none;border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 480px;margin-top: 60px;opacity: 0.5"></div>
+                                            <div id="thirdStep" style="display: none;border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 680px;margin-top: 60px;opacity: 0.5"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="stepy-tab" style="margin-left: 35px"></div>
+                                    <form id="default" th:action="@{/insertOrder}" method="post">
+
+                                        <fieldset title="Order Information" style="margin-left: 0;padding-bottom: 10px;">
+                                            <legend style="display: none">
+                                            </legend>
+                                            <div class="row" style="margin-bottom: 15px;">
+                                                <div class="col-md-4" style="vertical-align: middle">
+                                                    <span>Delivery Type：</span>
+                                                </div>
+                                                <div class="col-md-8" style="color: green;vertical-align: middle">
+                                                    <label class="radio-inline;"
+                                                           style="padding: 0;font-weight: bold;display: inline-block;margin-right: 20px;">
+                                                        <input style="vertical-align: middle;margin: 0" type="radio"
+                                                               name="model"
+                                                               id="Radio1"
+                                                               value="2">
+                                                        <span>Only UAV</span>
+                                                    </label>
+                                                    <label class="radio-inline;"
+                                                           style="padding: 0;font-weight: bold;display: inline-block;margin-right: 20px;">
+                                                        <input style="vertical-align: middle;margin: 0" type="radio"
+                                                               name="model"
+                                                               id="Radio2"
+                                                               value="3">
+                                                        <span>Only UGV</span>
+                                                    </label>
+                                                    <label class="radio-inline;"
+                                                           style="padding: 0;font-weight: bold;display: inline-block">
+                                                        <input style="vertical-align: middle;margin: 0" type="radio"
+                                                               name="model"
+                                                               id="Radio3"
+                                                               value="1">
+                                                        <span>UAV/UGV Collaboration</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-bottom: 10px;">
+                                                <div class="col-md-3"><span>Start Station：</span></div>
+                                                <div class="col-md-3"><span>End Station：</span></div>
+                                                <div class="col-md-3"><span>Order ID：</span></div>
+                                                <div class="col-md-3"><span>Deadline：</span></div>
+                                            </div>
+                                            <div class="row" style="margin-bottom: 15px;">
+                                                <div class="col-md-3">
+                                                    <input type="text" name="startStation" class="form-control"
+                                                           placeholder="W1">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="consignee" class="form-control"
+                                                           placeholder="U1 to U4">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="orderId" class="form-control"
+                                                           placeholder="Five Figure">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="deadline" class="form-control"
+                                                           placeholder="Time/min">
+                                                </div>
+                                            </div>
+
+                                            <div class="row" style="margin-bottom: 30px;">
+                                                <label class="col-md-1 control-label"
+                                                       style="font-weight: bold;">Note：</label>
+                                                <div class="col-md-11">
+                                                    <textarea name="info" rows="6" class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <fieldset title="Service Composition Strategy"
+                                                  style="margin: 0;padding-bottom: 10px;">
+                                            <legend style="display: none;"></legend>
+                                            <div class="row" style="margin-bottom: 10px;">
+                                                <div class="col-md-4 text-center" style="line-height: 34px;">
+                                                    <span>Optimization Objective：</span></div>
+                                                <div class="col-md-6">
+                                                    <select class="form-control" name="objective">
+                                                        <option value="distance">Distance Optimization</option>
+                                                        <option value="time">Time Optimization</option>
+                                                        <option value="energy">Energy Optimization</option>
+                                                        <option value="energyInTime">Energy Consumption Optimization Under Deadline Constraint
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2 text-center">
+                                                    <button type="button" onclick="sendAjax()" class="btn btn-primary">
+                                                        Generate
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div id="map_container" class="col-md-12"
+                                                 style="display: none;background-color: white;height: 450px;padding: 10px;border-radius: 10px;">
+                                                <div id="container"
+                                                     style="position: relative;width: 100%;height: 100%;border-radius: 10px;">
+                                                    <!--                                                    <div style="position:relative;z-index: 100;width: 200px;height: 70px;-->
+                                                    <!--                                                    background-color: white;margin-left: 10px;top: 10px;border-radius: 5px;">-->
+                                                    <!--                                                        <div>no load  middle</div>-->
+                                                    <!--                                                        <div id="timeAndEnergy"></div>-->
+
+                                                    <!--                                                    </div>-->
+                                                </div>
+                                            </div>
+
+
+                                        </fieldset>
+                                        <fieldset title="Service Allocation Strategy"
+                                                  style="margin: 0;padding-bottom: 10px;">
+                                            <legend style="display: none"></legend>
+                                            <div class="row" style="margin-bottom: 15px;">
+                                                <div class="col-md-2 text-center" style="line-height: 34px;">
+                                                    <span>UAV Type：</span></div>
+                                                <div class="col-md-3">
+                                                    <select class="form-control" name="uavType">
+                                                        <option value="1">Small</option>
+                                                        <option value="2">Middle</option>
+                                                        <option value="3">Large</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2 text-center" style="line-height: 34px;">
+                                                    <span>UGV Type：</span></div>
+                                                <div class="col-md-3">
+                                                    <select class="form-control" name="ugvType">
+                                                        <option value="1">Small</option>
+                                                        <option value="2">Middle</option>
+                                                        <option value="3">Large</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2 text-center">
+                                                    <button type="button" onclick="getRoute()" class="btn btn-primary">
+                                                        Generate
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-bottom: 10px;">
+                                                <div class="col-md-3 text-center"><span>Cargo Information：</span></div>
+                                            </div>
+                                            <div class="row" style="margin-bottom: 5px;">
+                                                <div class="col-md-3">
+                                                    <input type="text" name="goods" class="form-control"
+                                                           placeholder="Kind of Cargo">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="length" class="form-control"
+                                                           placeholder="Length/cm">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="width" class="form-control"
+                                                           placeholder="Width/cm">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="weight" class="form-control"
+                                                           placeholder="Weight/KG">
+                                                </div>
+                                            </div>
+                                            <div id="map_container_1" class="col-md-12"
+                                                 style="display: none;background-color: white;height: 450px;padding: 10px;border-radius: 10px;">
+                                                <div id="container_1"
+                                                     style="position: relative;width: 100%;height: 100%;border-radius: 10px;"></div>
+                                            </div>
+
+
+                                        </fieldset>
+                                        <button type="submit" class="btn btn-success finish">
+                                            Finish
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+</section>
+
+<div th:replace="common :: commonscript"></div>
+
+
+<!--Dashboard Charts-->
+<!--<script src="/js/dashboard-chart-init.js"></script>-->
+<script src="/js/jquery.validate.min.js"></script>
+<script src="/js/jquery.stepy.js"></script>
+<!--<script src="/js/jquery-3.4.1.min.js"></script>-->
+
+<!--<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/jquery-1.11.1.min.js" ></script>-->
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/underscore-min.js"></script>
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/backbone-min.js"></script>
+<script type="text/javascript" src='https://a.amap.com/jsapi_demos/static/demo-center/js/prety-json.js'></script>
+
+<script>
+    // var map = new AMap.Map("container", {
+    //     // center: [112.187017,31.763388],
+    //     resizeEnable: true,
+    //     zoom: 11
+    // });
+</script>
+<script type="text/javascript">
+    window._AMapSecurityConfig = {
+        securityJsCode: '2f8af7c5b6908ba48f1e68c3fe9744ce',
+    }
+</script>
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=9802c49d608a80962ed05ccdc9de7723&plugin=AMap.Driving"></script>
+<script>
+
+    $('#order').addClass("active").siblings().removeClass("active");
+    /*=====STEPY WIZARD====*/
+    $(function () {
+        $('#default').stepy({
+            backLabel: 'Previous',
+            block: true,
+            nextLabel: 'Next',
+            titleClick: false,
+            titleTarget: '.stepy-tab'
+        });
+    });
+    /*=====STEPY WIZARD WITH VALIDATION====*/
+    // $(function () {
+    //     $('#stepy_form').stepy({
+    //         backLabel: 'Back',
+    //         nextLabel: 'Next',
+    //         errorImage: true,
+    //         block: true,
+    //         description: true,
+    //         legend: false,
+    //         titleClick: true,
+    //         titleTarget: '#top_tabby',
+    //         validate: true
+    //     });
+    //     $('#stepy_form').validate({
+    //         errorPlacement: function (error, element) {
+    //             $('#stepy_form div.stepy-error').append(error);
+    //         },
+    //         rules: {
+    //             'name': 'required',
+    //             'email': 'required'
+    //         },
+    //         messages: {
+    //             'name': {
+    //                 required: 'Name field is required!'
+    //             },
+    //             'email': {
+    //                 required: 'Email field is requerid!'
+    //             }
+    //         }
+    //     });
+    // });
+
+
+    // model、startStation、consignee、orderId、type、length、width、height、weight、info、
+    // objective
+
+    getWorkflow();
+    getFileStatus();
+
+    function getFileStatus() {
+        $.ajax({
+            url: "/ajax/getFileStatus",
+            type: 'get',
+            success: function (data) {
+                if (data == "1") {
+                    var t = document.getElementById('workflow');
+                    t.style.display = 'block';
+                }
+            },
+        });
+    }
+
+    function getWorkflow() {
+        $.ajax({
+            url: "/ajax/workflow1",
+            type: "get",
+            data: {},
+            // dataType: "xml",
+            success: function (data) {
+                var diagramXML = data;
+                var bpmnModeler = new BpmnJS({
+                    container: '#canvas'
+                });
+                bpmnModeler.importXML(diagramXML, function (err) {
+                    if (err) {
+                        return console.error('failed to load diagram', err);
+                    }
+                });
+            }
+        })
+    }
+
+    function sendAjax() {
+        const model = $("[name='model']:checked").val();
+        const startStation = $("[name='startStation']").val();
+        const consignee = $("[name='consignee']").val();
+        const objective = $("[name='objective']").val();
+        const deadline = $("[name='deadline']").val();
+        $.ajax({
+            url: "/ajax/generate",
+            type: "post",
+            data: {
+                model: model,
+                startStation: startStation,
+                consignee: consignee,
+                objective: objective,
+                deadline: deadline
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data == null) {
+                    alert("All service composition plan cannot satisfy the deadline constraint, " +
+                        "please modify the order deadline constraint.")
+                }
+
+                var t = document.getElementById('map_container');
+                t.style.display = 'block';
+
+                var map = new AMap.Map("container", {
+                    // center: [112.187017,31.763388],
+                    resizeEnable: true,
+                    zoom: 14,
+                    lang: "en"
+                });
+
+                // var pathData = [];
+                // for (let i = 0; i < data[0].length - 1; i++) {
+                //     pathData[i] = data[0][i];
+                // }
+                var polyline = new AMap.Polyline({
+                    path: data[1],
+                    isOutline: true,
+                    outlineColor: '#ffeeff',
+                    borderWeight: 3,
+                    strokeColor: "#f0f",
+                    strokeOpacity: 1,
+                    strokeWeight: 6,
+                    strokeStyle: "dashed",
+                    strokeDasharray: [15, 5],
+                    lineJoin: 'round',
+                    lineCap: 'round',
+                    zIndex: 50,
+                })
+                map.add(polyline);
+
+                for (let i = 1; i < data[0].length - 1; i++) {
+                    let color;
+                    if (data[0][i][0] == 'W') {
+                        color = 'green';
+                    } else if (data[0][i][0] == 'D') {
+                        color = 'red';
+                    } else {
+                        color = 'black';
+                    }
+                    let marker = new AMap.Marker({
+                        icon: '/icon/poi-marker-' + color + '.png',
+                        position: data[1][i],
+                        offset: new AMap.Pixel(-13, -30)
+                    });
+                    marker.setMap(map);
+                }
+
+                for (let i = 0; i < data[0].length; i++) {
+                    let color;
+                    if (data[0][i][0] == 'W') {
+                        color = 'green';
+                    } else if (data[0][i][0] == 'D') {
+                        color = 'red';
+                    } else {
+                        color = 'black';
+                    }
+                    let text = new AMap.Text({
+                        text:data[0][i],
+                        anchor:'top-left',
+                        draggable:true,
+                        cursor:'pointer',
+                        style:{
+                            'padding': '.5rem .75rem',
+                            'margin-bottom': '1rem',
+                            'border-radius': '.40rem',
+                            'background-color': 'white',
+                            'width': '6rem',
+                            'border-width': 0,
+                            'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                            'text-align': 'center',
+                            'font-size': '15px',
+                            'font-weight': 'bolder',
+                            'color': color,
+                            'x-index':'10000'
+                        },
+                        position: data[1][i]
+                    });
+                    text.setMap(map);
+                }
+
+                let text1 = new AMap.Text({
+                    text:consignee,
+                    anchor:'top-left',
+                    draggable:true,
+                    cursor:'pointer',
+                    style:{
+                        'padding': '.5rem .75rem',
+                        'margin-bottom': '1rem',
+                        'border-radius': '.40rem',
+                        'background-color': 'white',
+                        'width': '6rem',
+                        'border-width': 0,
+                        'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                        'text-align': 'center',
+                        'font-size': '15px',
+                        'font-weight': 'bolder',
+                        'color': 'blue',
+                        'x-index':'10000'
+                    },
+                    position: data[3]
+                });
+                text1.setMap(map);
+
+                var drivingOption = {
+                    policy: AMap.DrivingPolicy.LEAST_TIME, // https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingPolicy
+                    ferry: 1,
+                    map: map,
+                    autoFitView: false,
+                    // panel: 'panel'
+                }
+                var location0 = data[1][data[1].length - 1]
+                var location1 = data[3]
+                var driving = new AMap.Driving(drivingOption)
+                driving.search(location0, location1, function (status, result) {
+                });
+
+                var startIcon = new AMap.Icon({
+                    size: new AMap.Size(25, 34),
+                    image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+                    imageSize: new AMap.Size(135, 40),
+                    imageOffset: new AMap.Pixel(-9, -3)
+                });
+                // var content1 = '<div class="marker-route marker-marker-bus-from"></div>';
+                var marker1 = new AMap.Marker({
+                    // content: markerContent,
+                    icon: startIcon,
+                    // icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png",
+                    position: data[1][0],
+                    offset: new AMap.Pixel(-17, -25),
+                });
+                var endIcon = new AMap.Icon({
+                    size: new AMap.Size(25, 34),
+                    image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+                    imageSize: new AMap.Size(135, 40),
+                    imageOffset: new AMap.Pixel(-50, -3)
+                });
+                var marker2 = new AMap.Marker({
+                    icon: endIcon,
+                    // icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
+                    position: data[1][data[1].length - 1],
+                    offset: new AMap.Pixel(-14, -29),
+                });
+                map.add([marker1, marker2])
+                map.setFitView(null, true, [40, 40, 50, 50]);
+
+                if (data == null) {
+                    alert("All service composition plan cannot satisfy the deadline constraint, " +
+                        "please modify the order deadline constraint.")
+                } else {
+                    alert("The optimal service composition plan has been generated.\n" + "Estimated Delivery Time："
+                        + data[2][0] + "s, Estimated Delivery Energy Consumption："
+                        + data[2][1] + "J");
+                }
+
+                // var t = document.getElementById('map_container');
+                // t.style.display = 'block';
+            }
+        })
+    }
+
+    function deleteOrder(id) {
+        $.ajax({
+            url: "/ajax/deleteOrder/" + id,
+            type: "delete",
+            dataType: "json",
+            success: function (data) {
+                if (data != 1) {
+                    alert("Fail To Delete！")
+                }
+                location.reload();
+            }
+        })
+    }
+
+    function getRoute() {
+        const model = $("[name='model']:checked").val();
+        const startStation = $("[name='startStation']").val();
+        const consignee = $("[name='consignee']").val();
+        const objective = $("[name='objective']").val();
+        const uavType = $("[name='uavType']").val();
+        const ugvType = $("[name='ugvType']").val();
+        const deadline = $("[name='deadline']").val();
+        const weight = $("[name='weight']").val();
+        $.ajax({
+            url: "/ajax/getRoute",
+            type: "post",
+            data: {
+                model: model,
+                startStation: startStation,
+                consignee: consignee,
+                objective: objective,
+                uavType: uavType,
+                ugvType: ugvType,
+                deadline: deadline,
+                weight: weight
+            },
+            dataType: "json",
+            success: function (data) {
+
+                var t = document.getElementById('map_container_1');
+                t.style.display = 'block';
+
+                if (data == null) {
+                    alert("All service allocation plan cannot satisfy the deadline constraint," +
+                        " please modify the order deadline constraint.")
+                } else if (data[0][0] == -1) {
+                    alert("The weight of the goods exceeds the maximum payload of the UAV/UAV. Please reselect the type of UAV/UAV.")
+                } else if (data[0][1] == -2) {
+                    alert("The weight of the goods exceeds the maximum payload of the UAV/UAV. Please reselect the type of UAV/UAV.")
+                } else {
+                    alert("The optimal service composition plan has been generated.\n" + "Estimated Delivery Time："
+                        + data[2][0] + "s, Estimated Delivery Energy Consumption："
+                        + data[2][1] + "J");
+                }
+
+                var map = new AMap.Map("container_1", {
+                    // center: [112.187017,31.763388],
+                    resizeEnable: true,
+                    zoom: 14,
+                    lang: "en"
+                });
+
+
+                var polyline = new AMap.Polyline({
+                    path: data[1],
+                    isOutline: true,
+                    outlineColor: '#ffeeff',
+                    borderWeight: 3,
+                    strokeColor: "#f0f",
+                    strokeOpacity: 1,
+                    strokeWeight: 6,
+                    strokeStyle: "dashed",
+                    strokeDasharray: [15, 5],
+                    lineJoin: 'round',
+                    lineCap: 'round',
+                    zIndex: 50,
+                })
+                map.add(polyline);
+
+                for (let i = 1; i < data[0].length - 1; i++) {
+                    let color;
+                    if (data[0][i][0] == 'W') {
+                        color = 'green';
+                    } else if (data[0][i][0] == 'D') {
+                        color = 'red';
+                    } else {
+                        color = 'black';
+                    }
+                    let marker = new AMap.Marker({
+                        icon: '/icon/poi-marker-' + color + '.png',
+                        position: data[1][i],
+                        offset: new AMap.Pixel(-13, -30)
+                    });
+                    marker.setMap(map);
+                }
+
+                for (let i = 0; i < data[0].length; i++) {
+                    let color;
+                    if (data[0][i][0] == 'W') {
+                        color = 'green';
+                    } else if (data[0][i][0] == 'D') {
+                        color = 'red';
+                    } else {
+                        color = 'black';
+                    }
+                    let text = new AMap.Text({
+                        text:data[0][i],
+                        anchor:'top-left',
+                        draggable:true,
+                        cursor:'pointer',
+                        style:{
+                            'padding': '.5rem .75rem',
+                            'margin-bottom': '1rem',
+                            'border-radius': '.40rem',
+                            'background-color': 'white',
+                            'width': '6rem',
+                            'border-width': 0,
+                            'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                            'text-align': 'center',
+                            'font-size': '15px',
+                            'font-weight': 'bolder',
+                            'color': color,
+                            'x-index':'10000'
+                        },
+                        position: data[1][i]
+                    });
+                    text.setMap(map);
+                }
+
+
+                let text1 = new AMap.Text({
+                    text:consignee,
+                    anchor:'top-left',
+                    draggable:true,
+                    cursor:'pointer',
+                    style:{
+                        'padding': '.5rem .75rem',
+                        'margin-bottom': '1rem',
+                        'border-radius': '.40rem',
+                        'background-color': 'white',
+                        'width': '6rem',
+                        'border-width': 0,
+                        'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                        'text-align': 'center',
+                        'font-size': '15px',
+                        'font-weight': 'bolder',
+                        'color': 'blue',
+                        'x-index':'10000'
+                    },
+                    position: data[3]
+                });
+                text1.setMap(map);
+
+                var drivingOption = {
+                    policy: AMap.DrivingPolicy.LEAST_TIME, // https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingPolicy
+                    ferry: 1,
+                    map: map,
+                    autoFitView: false,
+                    // panel: 'panel'
+                }
+                var location0 = data[1][data[1].length - 1]
+                var location1 = data[3]
+                var driving = new AMap.Driving(drivingOption)
+                driving.search(location0, location1, function (status, result) {
+                });
+
+
+                var startIcon = new AMap.Icon({
+                    size: new AMap.Size(25, 34),
+                    image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+                    imageSize: new AMap.Size(135, 40),
+                    imageOffset: new AMap.Pixel(-9, -3)
+                });
+                // var content1 = '<div class="marker-route marker-marker-bus-from"></div>';
+                var marker1 = new AMap.Marker({
+                    // content: markerContent,
+                    icon: startIcon,
+                    // icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png",
+                    position: data[1][0],
+                    offset: new AMap.Pixel(-17, -25),
+                });
+                var endIcon = new AMap.Icon({
+                    size: new AMap.Size(25, 34),
+                    image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+                    imageSize: new AMap.Size(135, 40),
+                    imageOffset: new AMap.Pixel(-50, -3)
+                });
+                var marker2 = new AMap.Marker({
+                    icon: endIcon,
+                    // icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
+                    position: data[1][data[1].length - 1],
+                    offset: new AMap.Pixel(-14, -29),
+                });
+                map.add([marker1, marker2])
+                map.setFitView(null, true, [40, 40, 50, 50]);
+
+                // var t = document.getElementById('map_container');
+                // t.style.display = 'block';
+            }
+        })
+    }
+
+
+</script>
+</body>
+</html>

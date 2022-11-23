@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords"
+          content="admin, dashboard, bootstrap, template, flat, modern, theme, responsive, fluid, retina, backend, html5, css, css3">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="shortcut icon" href="#" type="/image/png">
+
+    <title>AI APP Management</title>
+
+
+    <div th:include="common::commonheader"></div>
+    <script src="https://unpkg.com/bpmn-js@0.27.0-1/dist/bpmn-viewer.development.js"></script>
+
+</head>
+
+<body class="sticky-header" style="height: 100%;">
+
+<section>
+    <div th:replace="common :: leftmenu"></div>
+
+    <!-- main content start-->
+    <div class="main-content" style="min-height: 100%;">
+
+        <div th:replace="common :: headermenu"></div>
+
+
+        <!-- page heading start-->
+        <div class="page-heading">
+            <h3>
+                AI APP Management
+            </h3>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="#">Home</a>
+                </li>
+                <li class="active">AI APP Management</li>
+            </ul>
+        </div>
+        <!--body wrapper start-->
+        <div class="wrapper">
+            <div class="col-md-4">
+                <div class="row"
+                     style="padding-bottom: 10px;margin-right: 14px;background-color: white;margin-bottom: 10px;border-radius: 10px;">
+                    <div class="row center-block" style="margin-bottom: 15px;padding-left: 20px;">
+                        <h3>Number of Orders：[[${activeOrders.size()}]]</h3>
+                    </div>
+                    <form role="form" class="form-inline" style="background-color: white">
+                        <div class="form-group col-md-6">
+                            <input type="text" style="width: 100%" placeholder="Input" class="form-control input-lg">
+                        </div>
+                        <button class="btn btn-primary col-md-2 input-lg" type="submit">Search</button>
+                        <div class="dropdown col-md-offset-1 col-md-2">
+                            <button type="button" class="input-lg btn btn-default dropdown-toggle"
+                                    data-toggle="dropdown">
+                                Filters<span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Unfinished</a></li>
+                                <li><a href="#">Finished</a></li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                <div class="row" style="height:600px;overflow:auto; position: relative;margin-right: 1px;">
+                    <div class="row col-md-12" style="margin-top: 20px;padding-right: 0px;">
+                        <div class="col-md-12" style="padding: 0px;">
+                            <div class="panel newPanel" th:each="order:${activeOrders}">
+                                <div class="panel-body">
+                                    <div class="row" style="margin-bottom: 10px;">
+                                        <h4 class="col-md-5 text-center"><strong>Order ID: [[${order.orderId}]]</strong></h4>
+                                        <div class="col-md-3 col-md-offset-4">
+                                            <button class="btn btn-info btn-block" style="font-weight: bolder" onclick="sendAjax()">Tracking
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-bottom: 5px;">
+                                        <div class="col-md-6">
+                                            <button class="btn btn-block" style="font-weight: bolder;font-size: 18px;">
+                                                UAV ID: 0012
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-block" style="font-weight: bolder;font-size: 18px;">
+                                                UGV ID: 0123
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <button class="btn btn-block" style="font-weight: bolder;font-size: 18px;">
+                                                Cloud Server ID: 0432
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-block" style="font-weight: bolder;font-size: 18px;">
+                                                Edge Server ID: 0252
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8" style="overflow: hidden;background-color: white;height: 700px;padding: 10px;border-radius: 10px;">
+                <div id="info" class="center-block" style="color: #2a6496;position: absolute;top: 42%;left: 24%"><h1><strong>Please click on the order on the left.</strong></h1></div>
+                <div id="canvas" style="height: 1000px;margin-left: -140px;margin-top: 80px;">
+                    <div data-toggle="modal" data-target="#myModal" id="show" style="display: none">
+                        <div id="col1" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 250px;margin-top: 170px;opacity: 0.5"></div>
+                        <div id="col2" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 380px;margin-top: 60px;opacity: 0.5"></div>
+                        <div id="col3" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 380px;margin-top: 280px;opacity: 0.5"></div>
+                        <div id="col4" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 510px;margin-top: 170px;opacity: 0.5"></div>
+                        <div id="col5" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 630px;margin-top: 170px;opacity: 0.5"></div>
+                        <div id="col6" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 750px;margin-top: 60px;opacity: 0.5"></div>
+                        <div id="col7" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 750px;margin-top: 170px;opacity: 0.5"></div>
+                        <div id="col8" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 750px;margin-top: 280px;opacity: 0.5"></div>
+                        <div id="col9" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 870px;margin-top: 170px;opacity: 0.5"></div>
+                        <div id="col10" style="border-radius: 10px;position: absolute;z-index: 10;width: 100px;height: 80px;background-color: #4cae4c;
+margin-left: 990px;margin-top: 170px;opacity: 0.5"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--body wrapper end-->
+
+        <!--footer section start-->
+        <footer style="text-align: center;margin-top: 10px;">
+            2022 &copy; By AHU ISEC
+        </footer>
+        <!--footer section end-->
+    </div>
+    <!-- main content end-->
+
+
+    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="videoPlayModal" aria-hidden="true">'
+        <div class="modal-dialog" style="width:700px;">
+            <div class="modal-content" style="border-radius: 10px">
+                <div class="modal-header" style="border-radius: 10px 10px 0 0">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">running condition</h4>
+                </div>
+                <div class="modal-body" style="padding: 10px;">
+                    <div class="row text-center" id="filelist">
+                        <video controls="" width="656" height="369" class="video_link" poster="#">
+                            <source id="source" src="/media/123.mp4" type="video/mp4">
+                        </video>
+                    </div>
+
+                </div>
+                <!--                <div class="modal-footer">-->
+                <!--                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>-->
+                <!--                    <button type="button" class="btn btn-primary">提交更改</button>-->
+                <!--                </div>-->
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+<div th:replace="common :: commonscript"></div>
+
+<!--easy pie chart-->
+<script src="/js/easypiechart/jquery.easypiechart.js"></script>
+<script src="/js/easypiechart/easypiechart-init.js"></script>
+
+<!--Sparkline Chart-->
+<script src="/js/sparkline/jquery.sparkline.js"></script>
+<script src="/js/sparkline/sparkline-init.js"></script>
+
+<!--icheck -->
+<script src="/js/iCheck/jquery.icheck.js"></script>
+<script src="/js/icheck-init.js"></script>
+
+<!-- jQuery Flot Chart-->
+<script src="/js/flot-chart/jquery.flot.js"></script>
+<script src="/js/flot-chart/jquery.flot.tooltip.js"></script>
+<script src="/js/flot-chart/jquery.flot.resize.js"></script>
+
+
+<!--Morris Chart-->
+<script src="/js/morris-chart/morris.js"></script>
+<script src="/js/morris-chart/raphael-min.js"></script>
+
+<!--Calendar-->
+<script src="/js/calendar/clndr.js"></script>
+<script src="/js/calendar/evnt.calendar.init.js"></script>
+<script src="/js/calendar/moment-2.2.1.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<script>
+
+    $('#ai').addClass("active").siblings().removeClass("active");
+
+    $("#filelist").on('mouseenter', ".video_link", function () {
+        var videoDom = event.target;
+        videoDom.addEventListener('play', function () {
+            videoDom.play();
+        })
+    })
+
+
+    function sendAjax() {
+        $.ajax({
+            url: "/ajax/workflow",
+            type: "get",
+            data: {},
+            // dataType: "xml",
+            success: function (data) {
+                var diagramXML = data;
+                var bpmnModeler = new BpmnJS({
+                    container: '#canvas'
+                });
+                bpmnModeler.importXML(diagramXML, function (err) {
+                    if (err) {
+                        return console.error('failed to load diagram', err);
+                    } else {
+                        showWorkflow();
+                    }
+                });
+            }
+        })
+    }
+
+    function showWorkflow() {
+        var show = document.getElementById("info");
+        show.style.display="none";
+        var show = document.getElementById("show");
+        show.style.display="block";
+        var t1 = document.getElementById('col1');
+        var t2 = document.getElementById('col2');
+        var t3 = document.getElementById('col3');
+        var t4 = document.getElementById('col4');
+        var t5 = document.getElementById('col5');
+        var t6 = document.getElementById('col6');
+        var t7 = document.getElementById('col7');
+        var t8 = document.getElementById('col8');
+        var t9 = document.getElementById('col9');
+        var t10 = document.getElementById('col10');
+        for(let i = 1; i < 8; i++) {
+            setTimeout(function () {
+                t1.style.backgroundColor = '#4cae4c';
+                t2.style.backgroundColor = '#4cae4c';
+                t3.style.backgroundColor = '#4cae4c';
+                t4.style.backgroundColor = '#4cae4c';
+                t5.style.backgroundColor = '#4cae4c';
+                t6.style.backgroundColor = '#4cae4c';
+                t7.style.backgroundColor = '#4cae4c';
+                t8.style.backgroundColor = '#4cae4c';
+                t9.style.backgroundColor = '#4cae4c';
+                t10.style.backgroundColor = '#4cae4c';
+                switch (i) {
+                    case 1 :
+                        t1.style.backgroundColor = 'red';
+                        break;
+                    case 2 :
+                        t2.style.backgroundColor = 'red';
+                        t3.style.backgroundColor = 'red';
+                        break;
+                    case 3 :
+                        t4.style.backgroundColor = 'red';
+                        break;
+                    case 4 :
+                        t5.style.backgroundColor = 'red';
+                        break;
+                    case 5 :
+                        t6.style.backgroundColor = 'red';
+                        t7.style.backgroundColor = 'red';
+                        t8.style.backgroundColor = 'red';
+                        break;
+                    case 6 :
+                        t9.style.backgroundColor = 'red';
+                        break;
+                    case 7 :
+                        t10.style.backgroundColor = 'red';
+                        break;
+                }
+            }, 1500 * i);
+        }
+    }
+
+    // for(let i = 1; i < 11; i++) {
+    //     setTimeout(function() {
+    //         console.log(i)
+    //     }, 1000 * i);
+    // }
+</script>
+
+
+</body>
+</html>

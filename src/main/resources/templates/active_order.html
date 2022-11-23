@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords"
+          content="admin, dashboard, bootstrap, template, flat, modern, theme, responsive, fluid, retina, backend, html5, css, css3">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+<!--    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />-->
+    <link rel="stylesheet" type="text/css" href="https://a.amap.com/jsapi_demos/static/demo-center/css/prety-json.css">
+
+
+
+
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode:'2f8af7c5b6908ba48f1e68c3fe9744ce',
+        }
+    </script>
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=9802c49d608a80962ed05ccdc9de7723&plugin=AMap.Driving"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+<!--    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>-->
+
+    <link rel="shortcut icon" href="#" type="/image/png">
+
+    <title>EXPRESS 2.0</title>
+
+
+    <div th:include="common::commonheader"></div>
+
+    <style type="text/css">
+        .my_style_a1:hover{
+            font-weight: bolder;
+        }
+
+        .my_style_a2{
+            color: black;
+        }
+        .amap-icon img,
+        .amap-marker-content img{
+            width: 25px;
+            height: 34px;
+        }
+    </style>
+
+</head>
+
+<body class="sticky-header" style="height: 100%;">
+
+<section>
+    <div th:replace="common :: leftmenu"></div>
+
+    <!-- main content start-->
+    <div class="main-content" style="min-height: 100%;">
+
+        <div th:replace="common :: headermenu"></div>
+
+
+        <!--body wrapper start-->
+        <div class="wrapper">
+            <div class="col-md-4">
+
+                <div class="row" style="padding-bottom: 10px;">
+                    <div class="row center-block" style="margin-bottom: 15px;padding-left: 20px;">
+                        <h4 class="col-md-6">Number of Orders：[[${allOrders.size()}]]</h4>
+                        <h4 class="col-md-6">Unfinished Orders：[[${activeOrdersNum}]]</h4>
+                    </div>
+                    <form role="form" class="form-inline">
+                        <div class="form-group col-md-6">
+                            <input type="text" style="width: 100%" placeholder="Input" class="form-control input-lg">
+                        </div>
+                        <button class="btn btn-primary col-md-2 input-lg" type="submit">Search</button>
+                        <div class="dropdown col-md-offset-1 col-md-2">
+                            <button type="button" class="input-lg btn btn-default dropdown-toggle"
+                                    data-toggle="dropdown">
+                                Filters<span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Ready</a></li>
+                                <li><a href="#">Delivery in Process</a></li>
+                                <li><a href="#">Timeout</a></li>
+                                <li><a href="#">Finished</a></li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="row" style="height:690px;overflow:auto; position: relative;margin-right: 1px;">
+                    <div class="row col-md-12" style="margin-top: 20px;padding-right: 0px;">
+                        <div class="col-md-12" style="padding: 0px;">
+                            <div class="panel newPanel" th:onclick="getLocaltion([[${order.id}]]);" th:each="order:${allOrders}">
+                                <div class="panel-body" style="margin-left: 10px;padding-right: 0">
+                                    <div class="row">
+                                        <h4 class="col-md-5"><strong>Order ID: [[${order.orderId}]]</strong></h4>
+                                        <h4 class="col-md-offset-7" style="padding: 0px;">
+                                            <a class="btn btn-primary" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                               th:if="${order.status} == 0" th:href="@{'/main/'+${order.id}}">
+                                                Ready
+                                            </a>
+                                            <a class="btn btn-info" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                               th:if="${order.status} == 1" th:href="@{'/main/'+${order.id}}">
+                                                Delivery in Process
+                                            </a>
+                                            <a class="btn btn-danger" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                               th:if="${order.status} == 2" th:href="@{'/main/'+${order.id}}">
+                                                Timeout
+                                            </a>
+                                            <a class="btn btn-success" style="width: 150px;border-radius: 15px;font-size: 15px;padding: 2px;"
+                                               th:if="${order.status} == 3" th:href="@{'/main/'+${order.id}}">
+                                                Finished
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-md-4"><strong>Items: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span style="color: #2F6F9F">[[${order.goods}]]</span></strong></p>
+                                        <p class="col-md-4 col-md-offset-1"><strong>Last Station:</strong></p>
+                                        <p class="col-md-1"><strong><span style="color: #2F6F9F">[[${order.lastStation}]]</span></strong></p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-md-4"><strong>Deadline: <span style="color: #2F6F9F">[[${order.deadline}]] min</span></strong></p>
+                                        <p class="col-md-4 col-md-offset-1"><strong>Next Station:</strong></p>
+                                        <p class="col-md-1"><strong><span style="color: #2F6F9F">[[${order.nextStation}]]</span></strong></p>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-8" style="background-color: white;height: 820px;padding: 10px;border-radius: 10px;">
+                <div id="container" style="position: relative;width: 100%;height: 100%;border-radius: 10px;"></div>
+<!--                <div id="panel"></div>-->
+<!--                <img src="images/hefeimap.png" class="img-responsive" alt="goolemap"-->
+<!--                     style="position: relative;width: 100%;height: 100%;">-->
+                <div class="row col-md-10 col-md-offset-1 panel newPanel" style="position: absolute;top: 40px;">
+                    <div class="panel-body" style="padding-bottom: 0px;padding-top: 5px;">
+                        <div class="col-md-3">
+                            <div class="row col-md-12">
+                                <h4 style="text-align: center"><strong>Last Station</strong></h4>
+                            </div>
+                            <div class="row col-md-12">
+                                <p style="text-align: center">[[${info.get("lastStation")}]]</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="row col-md-12">
+                                <h4 style="text-align: center"><strong>Next Station</strong></h4>
+                            </div>
+                            <div class="row col-md-12">
+                                <p style="text-align: center">[[${info.get("nextStation")}]]</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="row col-md-12">
+                                <h4 style="text-align: center"><strong>Distance</strong></h4>
+                            </div>
+                            <div class="row col-md-12">
+                                <p style="text-align: center">[[${info.get("distance")}]]m</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="row col-md-12">
+                                <h4 style="text-align: center"><strong>Speed</strong></h4>
+                            </div>
+                            <div class="row col-md-12">
+                                <p style="text-align: center">[[${info.get("drone").speed}]]m/s</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-md-10 col-md-offset-1 panel newPanel"
+                     style="position: absolute;top: 580px;height: 200px;">
+                    <ul id="myTab" class="nav nav-tabs" style="margin-bottom: 5px;">
+                        <li class="col-md-3" style="padding: 0;text-align: center">
+                            <a class="my_style_a2 my_style_a1" href="#Order-details" data-toggle="tab">Order Information</a>
+                        </li>
+                        <li class="col-md-3" style="padding: 0;text-align: center">
+                            <a class="my_style_a2 my_style_a1" href="#Vehicle" data-toggle="tab">Vehicle Information</a>
+                        </li>
+                        <li class="col-md-3" style="padding: 0;text-align: center">
+                            <a class="my_style_a2 my_style_a1" href="#Customer-information" data-toggle="tab">Customer Information</a>
+                        </li>
+                        <li class="col-md-3" style="padding: 0;text-align: center">
+                            <a class="my_style_a2 my_style_a1" href="#Documents" data-toggle="tab">Notes</a>
+                        </li>
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade in active" id="Order-details">
+                            <p>Item: [[${info.get("order").goods}]]</p>
+                            <p>Length: [[${info.get("order").length}]]cm</p>
+                            <p>Width: [[${info.get("order").width}]]cm</p>
+                        </div>
+                        <div class="tab-pane fade" id="Vehicle">
+                            <p>Drone Type: No.[[${info.get("drone").id}]]</p>
+                            <p>Speed: [[${info.get("drone").speed}]]m/s</p>
+                        </div>
+                        <div class="tab-pane fade" id="Customer-information">
+                            <p>Customer Name: [[${info.get("order").consignee}]]</p>
+                        </div>
+                        <div class="tab-pane fade" id="Documents">
+                            <p>[[${info.get("order").info}]]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--body wrapper end-->
+
+        <!--footer section start-->
+        <footer style="text-align: center;margin-top: 10px;">
+            2022 &copy; By AHU ISEC
+        </footer>
+        <!--footer section end-->
+
+
+        <input id="pathLists" hidden="hidden" th:value="${pathLists}"/>
+        <input id="stationInfo" hidden="hidden" th:value="${stationInfo}"/>
+    </div>
+    <!-- main content end-->
+</section>
+
+<div th:replace="common :: commonscript"></div>
+<!--easy pie chart-->
+<script src="/js/easypiechart/jquery.easypiechart.js"></script>
+<script src="/js/easypiechart/easypiechart-init.js"></script>
+
+<!--Sparkline Chart-->
+<script src="/js/sparkline/jquery.sparkline.js"></script>
+<script src="/js/sparkline/sparkline-init.js"></script>
+
+<!--icheck-->
+<script src="/js/iCheck/jquery.icheck.js"></script>
+<script src="/js/icheck-init.js"></script>
+<!-- jQuery Flot Chart-->
+<script src="/js/flot-chart/jquery.flot.js"></script>
+<script src="/js/flot-chart/jquery.flot.tooltip.js"></script>
+<script src="/js/flot-chart/jquery.flot.resize.js"></script>
+
+
+<!--Morris Chart-->
+<!--<script src="/js/morris-chart/morris.js"></script>-->
+<!--<script src="/js/morris-chart/raphael-min.js"></script>-->
+
+<!--Calendar-->
+<script src="/js/calendar/clndr.js"></script>
+<script src="/js/calendar/evnt.calendar.init.js"></script>
+<script src="/js/calendar/moment-2.2.1.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+
+
+<!--Dashboard Charts-->
+<!--<script src="/js/dashboard-chart-init.js"></script>-->
+
+<!--<script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=9802c49d608a80962ed05ccdc9de7723"></script>-->
+<!--<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/jquery-1.11.1.min.js" ></script>-->
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/underscore-min.js" ></script>
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/backbone-min.js" ></script>
+<script type="text/javascript" src='https://a.amap.com/jsapi_demos/static/demo-center/js/prety-json.js'></script>
+<script>
+
+    $('#main').addClass("active").siblings().removeClass("active");
+    function getLocaltion(el) {
+        window.location.href = el;
+    }
+
+    var path = JSON.parse($('#pathLists').val());
+    var stationInfo = JSON.parse($('#stationInfo').val());
+
+
+    var start_lo = path[path.length-1][0];
+    var end_la = path[path.length-1][1];
+
+    // alert(path.length);
+    var map = new AMap.Map("container", {
+        // center: [112.187017,31.763388],
+        resizeEnable: true,
+        zoom: 16,
+        lang: "en"
+        // zoom: 16
+    });
+
+    var drivingOption = {
+        policy: AMap.DrivingPolicy.LEAST_TIME, // https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingPolicy
+        ferry: 1,
+        map: map,
+        autoFitView: false,
+        // panel: 'panel'
+    }
+
+    var driving = new AMap.Driving(drivingOption)
+
+    driving.search(new AMap.LngLat(start_lo,end_la), new AMap.LngLat(stationInfo[1][stationInfo[1].length - 1][0],stationInfo[1][stationInfo[1].length - 1][1]), function(status, result) {
+        // result https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
+        if (status === 'complete') {
+        } else {
+            log.error('fail：' + result)
+        }
+    });
+
+    var startIcon = new AMap.Icon({
+        size: new AMap.Size(25, 34),
+        image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+        imageSize: new AMap.Size(135, 40),
+        imageOffset: new AMap.Pixel(-9, -3)
+    });
+
+    // var content1 = '<div class="marker-route marker-marker-bus-from"></div>';
+    var marker1 = new AMap.Marker({
+            // content: markerContent,
+            icon: startIcon,
+            // icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png",
+            position: path[0],
+            offset: new AMap.Pixel(-17, -25),
+        });
+
+    var endIcon = new AMap.Icon({
+        size: new AMap.Size(25, 34),
+        image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+        imageSize: new AMap.Size(135, 40),
+        imageOffset: new AMap.Pixel(-50, -3)
+    });
+    var marker2 = new AMap.Marker({
+        icon: endIcon,
+        // icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
+        position: path[path.length-1],
+        offset: new AMap.Pixel(-14, -29),
+    });
+
+    map.add([marker1,marker2])
+
+
+    var polyline = new AMap.Polyline({
+        path: path,
+        isOutline: true,
+        outlineColor: '#ffeeff',
+        borderWeight: 3,
+        strokeColor: "#f0f",
+        strokeOpacity: 1,
+        strokeWeight: 6,
+        strokeStyle: "dashed",
+        strokeDasharray: [15, 5],
+        lineJoin: 'round',
+        lineCap: 'round',
+        zIndex: 50,
+    })
+    map.add(polyline);
+
+    for (let i = 0; i < stationInfo[0].length; i++) {
+        let color;
+        if (stationInfo[0][i][0] == 'W') {
+            color = 'green';
+        } else if (stationInfo[0][i][0] == 'D') {
+            color = 'red';
+        } else if (stationInfo[0][i][0] == 'C'){
+            color = 'black';
+        } else {
+            color = 'blue';
+        }
+        let text = new AMap.Text({
+            text:stationInfo[0][i],
+            anchor:'top-left',
+            draggable:true,
+            cursor:'pointer',
+            style:{
+                'padding': '.5rem .75rem',
+                'margin-bottom': '1rem',
+                'border-radius': '.40rem',
+                'background-color': 'white',
+                'width': '6rem',
+                'border-width': 0,
+                'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+                'text-align': 'center',
+                'font-size': '15px',
+                'font-weight': 'bolder',
+                'color': color,
+                'x-index':'10000'
+            },
+            position: stationInfo[1][i]
+        });
+        text.setMap(map);
+    }
+
+    for (let i = 1; i < stationInfo[0].length - 2; i++) {
+        let marker = new AMap.Marker({
+            icon: '/icon/poi-marker-red.png',
+            position: stationInfo[1][i],
+            offset: new AMap.Pixel(-13, -30)
+        });
+        marker.setMap(map);
+    }
+
+    map.setFitView(null, true, [80, 200, 30, 30]);
+</script>
+
+</body>
+</html>
