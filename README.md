@@ -1,7 +1,7 @@
 # EXPRESS 2.0
 * An Intelligent Service Management Framework for AIoT in the Edge
-* we propose EXPRESS 2.0 which is an intelligent service management framework for AIoT in the edge. Specifically, on top of the existing EXPRESS platform (https://github.com/ISEC-AHU/UAV-EXPRESS2.0), EXPRESS 2.0 includes the service collaboration management module, AI application management module, and data security and privacy management module.
-* The demo video can be found at https://youtu.be/Y34QzxJ3eL0.
+* we propose EXPRESS 2.0 which is an intelligent service management framework for AIoT in the edge. Specifically, on top of the existing EXPRESS platform (https://github.com/ISEC-AHU/UAV-EXPRESS), EXPRESS 2.0 includes the service collaboration management module, AI application management module, and data security and privacy management module.
+* The demo video can be found at https://youtu.be/d43s0pknV8E.
 # Developer
 * Developer organization:
 1. ISEC laboratory, School of Computer Science and Technology, Anhui University, Hefei, China
