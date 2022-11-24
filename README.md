@@ -1,5 +1,5 @@
 # EXPRESS 2.0
-* An Intelligent Service Management Framework for AIoT in the Edge
+* An Intelligent Service Management Framework for AIoT Systems in the Edge
 * we propose EXPRESS 2.0 which is an intelligent service management framework for AIoT in the edge. Specifically, on top of the existing EXPRESS platform (https://github.com/ISEC-AHU/UAV-EXPRESS), EXPRESS 2.0 includes the service collaboration management module, AI application management module, and data security and privacy management module.
 * The demo video can be found at https://youtu.be/d43s0pknV8E.
 # Developer
@@ -25,7 +25,9 @@
 1. Energy Consumption and Time of Delivery
 ![image](Figure/Energy.jpg)
 ![image](Figure/DeliveryTime.jpg)
-* We evaluate the implemented system in terms of both service response time and delivery service overhead. For system response time, we tested 10 functional modules of the system deployed in OpenFaaS, and their average response times were all much less than the ideal server response time of 250 ms. The core metric to measure the service overhead of UAV-UGV delivery system is the energy consumption and time of delivery. After comparing the service costs of different delivery orders, it can be found that the energy and time costs of the delivery solution using the service collaboration method are 7%-27% and 27%-50% less than other methods.
+* We evaluate the implemented system in terms of both service response time and delivery service overhead. The core metric to measure the service overhead of UAV-UGV delivery system is the energy consumption and time of delivery. After comparing the service costs of different delivery orders, it can be found that the energy and time costs of the delivery solution using the service collaboration method are 7%-27% and 27%-50% less than other methods.
+![](Figure/Response-Time.jpg)
+* For system response time, we tested 10 functional modules of the system deployed in OpenFaaS, and their average response times were all much less than the ideal server response time of 250 ms.
 # Full Paper Access
 Access from <A href="https://drive.google.com/file/d/1VtUJY6IY4SOcLAz_690nTYgHxj3xCeQs/view?usp=sharing">https://drive.google.com/file/d/1VtUJY6IY4SOcLAz_690nTYgHxj3xCeQs/view?usp=sharing</A>
 ## How to run EXPRESS 2.0 ?
