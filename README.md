@@ -22,6 +22,99 @@
 * As shown in Figure, the privacy preserving module is divided into three phases, which are feature abstraction, data perturbation and data calibration. At first, the raw data of IoT devices is transfer to the feature extraction sub-module to identify sensitive features that require privacy preserving. Secondly, data minimization sub-module needs to reduce the size of the data features to ensure that only privacy-preserving data is retained. In the data perturbation phase, the privacy budget is first assigned to each data feature. Next, the type of differential privacy noise function is selected. Finally, the raw data are noised in the perturbator. In the data calibration phase, it is necessary to calibrate the various types of data after noise addition to improve the data accuracy while suppressing the estimation bias.
 
 # Framework Evaluation
+## Experimental Environment
+
+The experimental environment was generated based on real map data surrounding Anhui University in Shushan District, Hefei City, Anhui Province, China. The generated environment is illustrated in the figure below.
+
+![Experimental Environment](Figure/map.PNG)
+
+The experimental environment consists of the following components:
+
+- 1 starting nodes
+- 3 destination nodes
+- 16 UAV delivery station
+- 10 UGV stations
+
+The parameter configurations of UAVs and UGVs at each station are presented in the following table:
+
+**UAV station**
+
+| UAV Type(w) | Idle Power(w) | Maximum Power(w) | Speed(m/s) | Payload(g) | Battery Capacity(Ah) |
+|:----------:|:----------:|:-------------:|:-----:|:-------:|:---------------:|
+| UAV<small>1</small>       |   200   |    300     | 6|  1500 |     180      |
+| UAV<small>2</small>       |   300   |    400     | 8|  3000 |     320     |
+| UAV<small>3</small>       |  400  |    500    | 10| 5000 |    400     |
+
+**UGV station**
+
+| UGV Type(w) | Idle Power(w) | Maximum Power(w) | Speed(m/s) | Payload(g) | Battery Capacity(Ah) |
+|:----------:|:----------:|:-------------:|:-----:|:-------:|:---------------:|
+| UGV<small>1</small>       |   30   |    80     | 3|  5000 |     1500      |
+| UGV<small>2</small>       |   50   |    100     | 4|  12000 |     2100     |
+| UGV<small>3</small>       |  80  |    130    | 5| 20000 |    2500     |
+
+
+Please note that the table above presents the quantities of drones and unmanned vehicles allocated at each station, along with their respective parameter configurations.
+
+
+## Service Composition and Resource Management Interface
+
+In this paper, we make detailed comparison experiments between UAV-UGV Collaboration algorithm and the other two policies in terms of metrics such as time and energy consumption. The compared algorithms are UGV only, UAV only. The service collaboration algorithms are implemented using the service composition  and resource management interface of the EXPRESS2.0 framework. The algorithm interface can be found at `src/main/java/com/example/core` path.
+1. ServiceComposition.java
+```java
+int uavType = 2, ugvType = 2;/*During the service composition phase, the parameters for UAVs and
+UGVs are preconfigured to generate the best service composition plan.*/
+case "time":           /* Optimization Object: Shortest Time*/
+                    if (environmentFlag == 0) {
+                        route = routePlanUtils.getShortestTimeRoute(order.getStartStation(),   order.getConsignee(),
+                                drone, car, weigh); 
+                                /*To invoke the service composition algorithm, specifically the shortest
+                                time algorithm, you can utilize the RoutePlanUtils.java file located at
+                                src/main/java/com/example/utils/ path. This file contains the
+                                implementation of the shortest time algorithm for service composition.*/
+                    } else {
+                        String carToUserDistance1 = GuideRoutePlanUtils.getCarToUserDistance(
+                                carToCustomerService.getAllCarStationNameByCustomerName(
+                                        order.getConsignee()), order.getConsignee());
+                        f = 1;
+                        path = OpenFaasUtils.getShortestTimePath1(order.getStartStation(), order.getConsignee()
+                                , uavType - 1, ugvType - 1, weigh, carToUserDistance1);
+                        String[] split2 = path.split(",");
+                        route = new ArrayList<>(Arrays.asList(split2));
+                    }
+                    break;
+```
+
+2. ResourceAllocation.java
+```java
+int weigh = (int) (order.getWeight() * 1000);
+Drone drone = droneService.getById(uavType);
+Car car = carService.getById(ugvType); /*During the resource allocation phase, the parameters for UAVs
+and UGVs need to be obtained from the delivery orders in order to generate the best resource allocation plan.*/
+case "energy":       /* Optimization Object: Energy Consumption*/
+                   if (environmentFlag == 0) {
+                       route = routePlanUtils.getShortestEnergyRoute(order.getStartStation(), order.getConsignee(),
+                               drone, car, weigh);
+                               /*To invoke the resource allocation algorithm, specifically the energy
+                               consumption optimization algorithm, you can utilize the GuideRoutePlanUtils.java file located at
+                               src/main/java/com/example/utils/path. This file contains the
+                                implementation of the energy consumption optimization algorithm for
+                                resource allocation.*/
+                   } else {
+                       String carToUserDistance2 = GuideRoutePlanUtils.getCarToUserDistance(
+                               carToCustomerService.getAllCarStationNameByCustomerName(
+                                       order.getConsignee()), order.getConsignee());
+                       f = 1;
+                       path = OpenFaasUtils.getShortestEnergyPath2(order.getStartStation(), order.getConsignee()
+                               , uavType - 1, ugvType - 1, weigh, carToUserDistance2);
+                       String[] split3 = path.split(",");
+                       route = new ArrayList<>(Arrays.asList(split3));
+                   }
+                   break;
+```
+
+
+
 1. Energy Consumption and Time of Delivery
 ![image](Figure/Energy.jpg)
 ![image](Figure/DeliveryTime.jpg)

@@ -49,7 +49,7 @@ public class ResourceAllocation {
         // 1：figured out the time energy consumption 0：not
         int f = 0;
         // environment flag 0：local service  1：openfaas service
-        int environmentFlag = 1;
+        int environmentFlag = 0;
         List<List<Double>> res;
         List<String> route = null;
         String path;

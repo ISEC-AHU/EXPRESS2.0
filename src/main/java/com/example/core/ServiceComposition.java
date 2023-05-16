@@ -45,16 +45,17 @@ public class ServiceComposition {
      * @date 2022/10/13 16:46
      */
     public List<List<Double>> selectStrategyByObjective(
-            Order order, String objective, int uavType, int ugvType) {
+            Order order, String objective) {
         // 1：figured out the time energy consumption 0：not
         int f = 0;
         // environment flag 0：local service  1：openfaas service
-        int environmentFlag = 1;
+        int environmentFlag = 0;
         List<List<Double>> res;
         List<String> route = null;
         String path;
         int[] timeAndEnergy;
         int weigh = (int) (order.getWeight() * 1000);
+        int uavType = 2, ugvType = 2;
         Drone drone = droneService.getById(uavType);
         Car car = carService.getById(ugvType);
         // Whether the load is bearable
